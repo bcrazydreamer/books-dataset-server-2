@@ -56,6 +56,12 @@ app.post('/', async function(req, res, next) {
   var limit = 500;
   var skip = 0;
   var prj = {};
+  var sort = {};
+  if(bv.isObject(data.sort)){
+    sort = data.sort;
+  } else {
+    sort = {rating : -1};
+  }
   try{
     if(bv.isString(data.book) && data.book.trim().length > 0){
       s.title = new RegExp(data.book.trim(),"ig");
@@ -69,7 +75,7 @@ app.post('/', async function(req, res, next) {
   }catch(err){}
   try{
     ob.success = true;
-    ob.data = await Books.find(s,prj,{skip : skip,limit : limit,sort : {rating : -1}});
+    ob.data = await Books.find(s,prj,{skip : skip,limit : limit,sort : sort});
   }catch(error){
     ob.success = false;
     ob.data = {};

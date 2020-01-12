@@ -7,6 +7,7 @@ const helmet         = require('helmet');
 const compression    = require('compression');
 const cors           = require('cors');
 const bv             = require('bvalid');
+const mongoose       = require('mongoose');
 const Books          = require('./model/books.model');
 
 const port = process.env.PORT || 3000;
@@ -68,6 +69,15 @@ app.post('/', async function(req, res, next) {
     }
     if(bv.isString(data.author) && data.author.trim().length > 0){
       s.authors = new RegExp(data.author.trim(),"ig");
+    }
+    if(bv.isString(data.id)){
+     if(mongoose.Types.ObjectId.isValid(data.id.trim())){
+         s._id = mongoose.Types.ObjectId(data.id.trim());
+     } else {
+         ob.success = false;
+         ob.data = {};
+         return res.status(400).json(ob);
+     }
     }
     if(!isNaN(data.limit) && Number(data.limit) < 500){limit = Number(data.limit)}
     if(!isNaN(data.skip)){skip = Number(data.skip)}

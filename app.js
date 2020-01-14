@@ -66,10 +66,10 @@ app.post('/', async function(req, res, next) {
   var stk = data.strict === true || data.strict === "true" ? true : false;
   try{
     if(bv.isString(data.book) && data.book.trim().length > 0){
-      s.title = stk ? new RegExp(data.book.trim(),"ig") : data.book.trim();
+      s.title = !stk ? new RegExp(data.book.trim(),"ig") : data.book.trim();
     }
     if(bv.isString(data.author) && data.author.trim().length > 0){
-      s.authors = stk ? new RegExp(data.author.trim(),"ig") : data.author.trim(); 
+      s.authors = !stk ? new RegExp(data.author.trim(),"ig") : data.author.trim(); 
     }
     if(bv.isString(data.id)){
      if(mongoose.Types.ObjectId.isValid(data.id.trim())){

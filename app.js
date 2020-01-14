@@ -63,12 +63,13 @@ app.post('/', async function(req, res, next) {
   } else {
     sort = {rating : -1};
   }
+  var stk = data.strict === true || data.strict === "true" ? true : false;
   try{
     if(bv.isString(data.book) && data.book.trim().length > 0){
-      s.title = new RegExp(data.book.trim(),"ig");
+      s.title = stk ? new RegExp(data.book.trim(),"ig") : data.book.trim();
     }
     if(bv.isString(data.author) && data.author.trim().length > 0){
-      s.authors = new RegExp(data.author.trim(),"ig");
+      s.authors = stk ? new RegExp(data.author.trim(),"ig") : data.author.trim(); 
     }
     if(bv.isString(data.id)){
      if(mongoose.Types.ObjectId.isValid(data.id.trim())){

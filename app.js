@@ -81,6 +81,22 @@ app.post('/', async function(req, res, next) {
         s.$or = _s.$or;
       }
     }
+
+    if(bv.isString(data.genres) && data.genres.trim().length > 0){
+      s.genres = !stk ? new RegExp(data.genres.trim(),"ig") : data.genres.trim(); 
+    } else if(bv.isArray(data.genres)){
+      var _s = {$or : []}
+      for(var au = 0 ; au < data.genres.length; au++){
+        if(bv.isString(data.genres[au]) && data.genres[au].trim().length > 0){
+          _s.$or.push({genres : new RegExp(data.genres[au].trim(),"ig")})
+        }
+      }
+      if(_s.$or.length > 0){
+        s.$or = _s.$or;
+      }
+    }
+
+
     if(bv.isString(data.id)){
      if(mongoose.Types.ObjectId.isValid(data.id.trim())){
          s._id = mongoose.Types.ObjectId(data.id.trim());

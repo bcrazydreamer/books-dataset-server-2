@@ -148,6 +148,7 @@ app.post('/bookbygenre', async function(req, res, next) {
     response.type = 1;
     response.genres = defgenrs;
     response.books = books;
+    response.success = false;
     return res.status(200).json(response);
   }
   try{
@@ -165,12 +166,14 @@ app.post('/bookbygenre', async function(req, res, next) {
         }catch(err){console.log(err)}
       }
       if(count > 1){
+        response.success = true;
         response.type = 0;
         response.genres = bestgen;
         response.books = books;
       } else {
         books = await Books.find({genres : new RegExp(defgenrs,"ig")},prj,{skip : skip,limit : limit,sort : sort});
         response.type = 1;
+        response.success = true;
         response.genres = defgenrs;
         response.books = books;
       }

@@ -136,6 +136,8 @@ app.post('/bookbygenre', async function(req, res, next) {
     sort = {rating : -1};
   }
 
+  if(!isNaN(data.limit) && Number(data.limit) < 500){limit = Number(data.limit)}
+
   var defgenrs = "self help";
   var genrs = data.genres;
   var bestgen = "";

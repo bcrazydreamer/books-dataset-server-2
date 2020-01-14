@@ -155,6 +155,7 @@ app.post('/bookbygenre', async function(req, res, next) {
   }
   try{
       genrs = genrs.split("|");
+      genrs.sort();
       for(var i = 0 ; i < genrs.length ; i++){
         try{
           var _books =  await Books.find({

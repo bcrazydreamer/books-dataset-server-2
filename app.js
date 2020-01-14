@@ -123,6 +123,65 @@ app.post('/', async function(req, res, next) {
   return res.status(200).json(ob);
 });
 
+
+app.post('/bookbygenre', async function(req, res, next) {
+  var data = req.body;
+  var limit = 500;
+  var skip = 0;
+  var prj = {};
+  var sort = {};
+  if(bv.isObject(data.sort)){
+    sort = data.sort;
+  } else {
+    sort = {rating : -1};
+  }
+
+  var defgenrs = "self help";
+  var genrs = data.genres;
+  var bestgen = "";
+  var books;
+  var count = 0;
+  var response = {};
+
+  if(!(bv.isString(genrs) && genrs.trim().length > 0)){
+    books = await Books.find({genres : new RegExp(defgenrs,"ig")},prj,{skip : skip,limit : limit,sort : sort});
+    response.type = 1;
+    response.genres = defgenrs;
+    response.books = books;
+    return res.status(200).json(response);
+  }
+  try{
+      genrs = genrs.split("|");
+      for(var i = 0 ; i < genrs.length ; i++){
+        try{
+          var _books =  await Books.find({
+                          genres : new RegExp(genrs[i].trim(),"ig")
+                        },prj,{skip : skip,limit : limit,sort : sort});
+          if(count < _books.length){
+            count = _books.length;
+            books = _books;
+            bestgen = genrs[i].trim();
+          }
+        }catch(err){console.log(err)}
+      }
+      if(count > 0){
+        response.type = 0;
+        response.genres = bestgen;
+        response.books = books;
+      } else {
+        books = await Books.find({genres : new RegExp(defgenrs,"ig")},prj,{skip : skip,limit : limit,sort : sort});
+        response.type = 1;
+        response.genres = defgenrs;
+        response.books = books;
+      }
+      return res.status(200).json(response);
+  }catch(err){
+    response.success = false;
+    response.data = {};
+    return res.status(500).json(response);
+  }
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

@@ -70,6 +70,16 @@ app.post('/', async function(req, res, next) {
     }
     if(bv.isString(data.author) && data.author.trim().length > 0){
       s.authors = !stk ? new RegExp(data.author.trim(),"ig") : data.author.trim(); 
+    } else if(bv.isArray(data.author)){
+      var _s = {$or : []}
+      for(var au = 0 ; au < data.author.length; au++){
+        if(bv.isString(data.author[au]) && data.author[au].trim().length > 0){
+          _s.$or.push({authors : new RegExp(data.author[au].trim(),"ig")})
+        }
+      }
+      if(_s.$or.length > 0){
+        s.$or = _s.$or;
+      }
     }
     if(bv.isString(data.id)){
      if(mongoose.Types.ObjectId.isValid(data.id.trim())){
@@ -83,7 +93,9 @@ app.post('/', async function(req, res, next) {
     if(!isNaN(data.limit) && Number(data.limit) < 500){limit = Number(data.limit)}
     if(!isNaN(data.skip)){skip = Number(data.skip)}
     if(bv.isObject(data.prj)){prj = data.prj}
-  }catch(err){}
+  }catch(err){
+    console.log(err);
+  }
   try{
     ob.success = true;
     ob.data = await Books.find(s,prj,{skip : skip,limit : limit,sort : sort});

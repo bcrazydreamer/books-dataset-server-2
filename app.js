@@ -164,7 +164,7 @@ app.post('/bookbygenre', async function(req, res, next) {
           }
         }catch(err){console.log(err)}
       }
-      if(count > 0){
+      if(count > 1){
         response.type = 0;
         response.genres = bestgen;
         response.books = books;
